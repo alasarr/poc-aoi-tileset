@@ -46,7 +46,7 @@ async function getFiles(dir) {
 async function doesFileExists(pathArray) {
   const viewFile = path.join(cwd(), ...pathArray);
 
-  return await new Promise((resolve) => {
+  return new Promise((resolve) => {
     fs.access(viewFile, fs.F_OK, (err) => {
       if (err) resolve(false);
       return resolve(true);
@@ -54,9 +54,14 @@ async function doesFileExists(pathArray) {
   });
 }
 
+function checkName(name, suffix) {
+  return name.replace(suffix, '').replace(suffix.toLowerCase(), '') + suffix;
+}
+
 module.exports = {
   promptArgs,
   doesFileExists,
   getFiles,
   readFile,
+  checkName,
 };

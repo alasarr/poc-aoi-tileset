@@ -1,11 +1,9 @@
 import GeocoderLayer from './GeocoderLayer';
-import DemographyTilesetLayer from './DemographyTilesetLayer';
-// Auto import
+// [hygen] Import layers
 
 export const getLayers = () => {
   return [
     GeocoderLayer(),
-    DemographyTilesetLayer(),
-    // Auto import layers
+    // [hygen] Add layer
   ];
 };

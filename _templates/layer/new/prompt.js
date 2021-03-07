@@ -1,11 +1,11 @@
 // see types of prompts:
 // https://github.com/enquirer/enquirer/tree/master/examples
 //
-const { promptArgs, readFile, getFiles } = require('../../promptUtils');
+const { promptArgs, readFile, getFiles, checkName } = require('../../promptUtils');
 
 const VIEWS_DIR = 'components/views';
 
-const SOURCE_TYPES = ['sql', 'bq'];
+const SOURCE_TYPES = ['sql', 'bigquery'];
 
 const LAYER_TYPES = {
   [SOURCE_TYPES[0]]: 'CartoSQLLayer',
@@ -25,7 +25,7 @@ const prompt = async ({ prompter, args }) => {
 
   // Check name to remove layer word if the user added it by (his/her)self
   let answers = await promptArgs({ prompter, args, questions });
-  answers.name = answers.name.replace('Layer', '').replace('layer', '') + 'Layer';
+  answers.name = checkName(answers.name, 'Layer');
 
   const sourceFiles = await getFiles('src/data/sources');
   const sourcesOpts = sourceFiles.reduce((total, { name }) => {
@@ -58,7 +58,7 @@ const prompt = async ({ prompter, args }) => {
   const selectedSourceFileContent = readFile(
     `src/data/sources/${answers.source_file}.js`
   );
-  const res = /(?:type: ')(?<type>[\w]*)(?:')/gi.exec(selectedSourceFileContent);
+  const res = /(?:type: ')(?<type>sql|bigquery*)(?:')/g.exec(selectedSourceFileContent);
   answers.type_source = 'sql';
 
   if (res) {

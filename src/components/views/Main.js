@@ -21,7 +21,7 @@ import { BASEMAPS } from '@carto/react/basemaps';
 import Map from 'components/common/Map';
 import ZoomControl from 'components/common/ZoomControl';
 import { getLayers } from 'components/layers';
-import { setBottomSheetOpen, setError } from 'config/appSlice';
+import { setBottomSheetOpen, setError } from 'store/appSlice';
 import cartoLogoMap from 'assets/img/carto-logo-map.svg';
 
 const drawerWidth = 350;
@@ -166,7 +166,7 @@ function Main() {
   const bottomSheetOpen = useSelector((state) => state.app.bottomSheetOpen);
   const isGmaps = useSelector((state) => BASEMAPS[state.carto.basemap].type === 'gmaps');
 
-  // Auto import useEffect
+  // [hygen] Add useEffect
 
   const handleClose = () => {
     dispatch(setError(null));
