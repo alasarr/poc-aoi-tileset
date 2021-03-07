@@ -2,7 +2,7 @@ import { pointToTile, tileToBBOX, tileToQuadkey } from '@mapbox/tilebelt';
 import bbox from '@turf/bbox';
 import booleanIntersects from '@turf/boolean-intersects';
 import bboxPolygon from '@turf/bbox-polygon';
-import { parse } from '@loaders.gl/core';
+import { load } from '@loaders.gl/core';
 import { MVTLoader } from '@loaders.gl/mvt';
 
 const DATA_ZOOM = 14;
@@ -50,15 +50,22 @@ export const getAOIData = async (geom) => {
   const featuresMap = new Map();
 
   const getTileData = async (tile) => {
-    const url = MAPS_API_URL.replace('{x}', tile[0])
-      .replace('{y}', tile[1])
-      .replace('{z}', tile[2]);
-    const features = await parse(fetch(url), MVTLoader);
+    const [x, y, z] = tile;
+    const url = MAPS_API_URL.replace('{x}', x).replace('{y}', y).replace('{z}', z);
+
+    const options = {
+      mvt: {
+        coordinates: 'wgs84',
+        tileIndex: { x, y, z },
+      },
+    };
+    const features = await load(url, MVTLoader, options);
+
     for (const f of features) {
       const props = f.properties;
       const { geoid } = props;
-      if (targetTiles.has(geoid) && !featuresMap.has(geoid)) {
-        featuresMap.set(geoid, props);
+      if (targetTiles.has(geoid)) {
+        featuresMap.set(geoid, f);
       }
     }
   };

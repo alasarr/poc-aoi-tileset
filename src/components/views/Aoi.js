@@ -1,6 +1,14 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import {
+  addLayer,
+  addSource,
+  removeLayer,
+  removeSource,
+  setViewState,
+} from '@carto/react/redux';
 
 import { getAOIData } from '../../data/models/AOIModel';
 
@@ -32,16 +40,48 @@ const aoi = {
   ],
 };
 
+const SOURCE_ID = 'polyfillSource';
+const LAYER_ID = 'polyFillLayer';
+
 export default function Aoi() {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(
+      setViewState({
+        latitude: 40.73711228816394,
+        longitude: -73.9874267578125,
+        zoom: 12,
+        transitionDuration: 500,
+      })
+    );
+
     async function fetchData() {
-      const data = await getAOIData(aoi);
+      const data = await getAOIData(aoi, 'geojson');
       console.log(data);
+      dispatch(
+        addSource({
+          id: SOURCE_ID,
+          data,
+        })
+      );
+
+      dispatch(
+        addLayer({
+          id: LAYER_ID,
+          source: SOURCE_ID,
+        })
+      );
     }
     fetchData();
-  }, []);
+
+    // Clean up when leave
+    return () => {
+      dispatch(removeLayer(LAYER_ID));
+      dispatch(removeSource(SOURCE_ID));
+    };
+  }, [dispatch]);
 
   return (
     <Grid container direction='column' className={classes.root}>
