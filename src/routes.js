@@ -4,6 +4,7 @@ import { OAuthCallback } from '@carto/react/oauth';
 import Main from 'components/views/Main';
 import NotFound from 'components/views/NotFound';
 
+import Demography from 'components/views/Demography.js';
 // Auto import
 const routes = [
   {
@@ -11,6 +12,8 @@ const routes = [
     element: <Main />,
     children: [
       // { path: '/', element: <Navigate to='/<your default view>' /> },
+      { path: '/demography', element: <Demography /> },
+
       // Auto import routes
     ],
   },
